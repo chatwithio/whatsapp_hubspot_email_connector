@@ -35,6 +35,12 @@ All Configuration should be put in the .env file amd any senstive data should th
 pip install -r requirements.txt
 ```
 
+The application is now built. You can test it my running:
+
+```
+python main.py
+```
+
 Then we recommend setting up a cron
 
 ```
