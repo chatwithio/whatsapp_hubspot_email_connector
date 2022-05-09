@@ -2,14 +2,20 @@ from imap_tools import MailBox, AND, MailMessageFlags, A
 from dotenv import dotenv_values
 import re
 import requests
+import os
+
+
+my_dir = os.getcwd()
+
 
 config = {
-    **dotenv_values("/home/wardazo/python/hubspot_mailer/.env"),  # load shared development variables
-    **dotenv_values("/home/wardazo/python/hubspot_mailer/.env.local"),  # load sensitive variables
+    **dotenv_values(my_dir+"/.env"),  # load shared development variables
+    **dotenv_values(my_dir+"/.env.local"),  # load sensitive variables
 }
 
 
 def send_whatsapp(email_data):
+
     data = {
         "to": config['SEND_TO_TEL'],
         "type": "template",
@@ -45,8 +51,10 @@ def send_whatsapp(email_data):
         "Content-Type": "application/json; charset=utf-8",
         "D360-API-KEY": config['D360-API-KEY']
     }
+
     try:
         requests.post('https://waba.360dialog.io/v1/messages', json=data, headers=headers)
+
     except requests.exceptions.RequestException as e:
         raise e
 
