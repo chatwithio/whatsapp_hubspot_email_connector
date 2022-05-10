@@ -15,7 +15,7 @@ All Configuration should be put in the .env file amd any senstive data should th
 
 **EMAIL**=the email where the hubspot mail is received
 
-**PASSWORD**=you emial password
+**PASSWORD**=you email password
 
 **the 360 template**=noreply@hubspot.com (the sender)
 
