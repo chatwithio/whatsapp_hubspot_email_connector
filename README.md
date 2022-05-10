@@ -2,7 +2,7 @@
 
 ## The idea
 
-The full hubspot api can be expensive, but its is also possible to send an email (free) to bridge application communication.
+The full Hubspot api can be expensive, but its is also possible to send an email (free) to bridge application communication.
 
 We can then listen for this specific type of email and then process it according to predefined rules so that we can 
 then send an email
