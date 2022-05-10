@@ -1,13 +1,13 @@
-#Whatsapp Hubspot Connector
+# Whatsapp Hubspot Connector
 
-##The idea
+## The idea
 
 The full hubspot api can be expensive, but its is also possible to ssend an email,
 
 We acn then listen for this specific type of email and then process it according to predifined rules so that we can 
 then send an email
 
-##Configuration
+## Configuration
 
 All Configuration should be put in the .env file amd any senstive data should then be put in the .env.local, for example the whatapps api key
 
@@ -29,7 +29,7 @@ All Configuration should be put in the .env file amd any senstive data should th
 
 **D360-API-NAMESPACE**=the 360 namespace
 
-##Installation
+## Installation
 
 ```
 pip install -r requirements.txt
