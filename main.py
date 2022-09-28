@@ -3,21 +3,24 @@ from dotenv import dotenv_values
 import re
 import requests
 import os
-
+from bs4 import BeautifulSoup
 
 my_dir = os.getcwd()
+abspath = os.path.abspath(__file__)
+my_dir = os.path.dirname(abspath)
+os.chdir(my_dir)
+
 
 
 config = {
-    **dotenv_values(my_dir+"/.env"),  # load shared development variables
-    **dotenv_values(my_dir+"/.env.local"),  # load sensitive variables
+    **dotenv_values(my_dir + "/.env"),  # load shared development variables
+    **dotenv_values(my_dir + "/.env.local"),  # load sensitive variables
 }
 
 
-def send_whatsapp(email_data):
-
+def send_whatsapp(tel, email_data):
     data = {
-        "to": config['SEND_TO_TEL'],
+        "to": tel.replace(" ", "").replace("+", ""),
         "type": "template",
         "template": {
             "namespace": config['D360-API-NAMESPACE'],
@@ -30,17 +33,23 @@ def send_whatsapp(email_data):
                 "type": "body",
                 "parameters": [
                     {
-                        "text": email_data['name'],
+                        "text": email_data,
+                        # "text": email_data['name'] + " " + email_data['email'] + " " + email_data['tel'] + " " +
+                        #         email_data['emp'],
                         "type": 'text',
-                    },
-                    {
-                        "text": email_data['email'],
-                        "type": 'text',
-                    },
-                    {
-                        "text": email_data['tel'],
-                        "type": 'text',
-                    },
+                    }
+                    # {
+                    #     "text": email_data['email'],
+                    #     "type": 'text',
+                    # },
+                    # {
+                    #     "text": email_data['tel'],
+                    #     "type": 'text',
+                    # },
+                    # {
+                    #     "text": email_data['emp'],
+                    #     "type": 'text',
+                    # },
                 ]
             }
             ]
@@ -88,22 +97,58 @@ def parse_body(email_text):
 
 
 def process_mails():
-    with MailBox(config['HOST']).login(config['EMAIL'], config['PASSWORD'], 'INBOX') as mailbox:
-        #print("IN")
+
+    # results = {
+    #     'email': '',
+    #     'name': '',
+    #     'tel': '',
+    #     'emp': '',
+    # }
+    #
+    # send_whatsapp(results)
+
+    with MailBox(config['HOST']).login(config['EMAIL'], 'Amenas88!!', 'INBOX') as mailbox:
+        # print("IN")
         for msg in mailbox.fetch(
                 criteria=AND(
                     seen=False,
                     from_=config['SENDER_MAIL'],
-                    #subject=config['SENDER_SUBJECT']
-                    ),
+                    subject=config['SENDER_SUBJECT']
+                ),
                 mark_seen=False,
                 bulk=True):
-            print(msg.text)
 
+            soup = BeautifulSoup(msg.html, "html.parser")
+
+            c = 0
+
+            results = {
+                'email': '',
+                'name': '',
+                'tel': '',
+                'emp': '',
+            }
+
+            for tag in soup.findAll('p'):
+                if not tag.has_attr('style'):
+                    if c == 0:
+                        results['name'] = tag.text.strip()
+                    if c == 1:
+                        results['name'] = results['name'] + "  " + tag.text.strip()
+                    if c == 2:
+                        results['tel'] = tag.text
+                    if c == 3:
+                        results['email'] = tag.text
+                    if c == 4:
+                        results['emp'] = tag.text
+                    c = c + 1
+
+            message = "Message sent from hubspot: Name"+results['name'] + " Email: " + results['email'] + " Tel: " + results['tel'] + " Employees: " + results['emp']
+            #print(message)
 
             if "on HubSpot Form" or "" in msg.subject:
-                client_details = parse_body(msg.text)
-                send_whatsapp(client_details)
+                # client_details = parse_body(msg.text)
+                send_whatsapp(results['tel'], message)
                 mailbox.flag(msg.uid, MailMessageFlags.SEEN, True)
 
 
