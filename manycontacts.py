@@ -15,6 +15,3 @@ def send_to_may_contacts(tel, message, apikey):
             print("Message sent")
     except Exception as e:
         logging.error(e)
-
-
-send_to_may_contacts('34910059158', 'Test', '9d5239e6-3843-4144-b1a9-cd180b5bb945')
